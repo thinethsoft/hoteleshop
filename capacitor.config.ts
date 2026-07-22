@@ -6,7 +6,6 @@ const config: CapacitorConfig = {
   webDir: 'www',
   bundledWebRuntime: false,
   server: {
-    url: 'https://admin-hoteleshop.hoteleshoplk2.com',
     cleartext: true
   },
   plugins: {

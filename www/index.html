@@ -2,11 +2,404 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Shop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>E-Shop Mobile Launcher</title>
+    <style>
+        :root {
+            --primary: #dc2626;
+            --primary-hover: #b91c1c;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            --card-bg: rgba(255, 255, 255, 0.07);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-box {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            border-radius: 20px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
+        }
+
+        .logo-box svg {
+            width: 44px;
+            height: 44px;
+            fill: #ffffff;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        p.subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        .status-box {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .status-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #38bdf8;
+            word-break: break-all;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 0.8s linear infinite;
+            margin: 16px auto 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #f1f5f9;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            padding: 24px;
+            text-align: left;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #dc2626;
+        }
+
+        .preset-list {
+            margin-bottom: 20px;
+        }
+
+        .preset-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            margin-top: 6px;
+            word-break: break-all;
+        }
+
+        .preset-btn:hover {
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+    </style>
 </head>
 <body>
-    <!-- Capacitor will automatically redirect to the remote URL -->
-    <h1>Loading...</h1>
+
+    <div class="container">
+        <div class="logo-box">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12zm-7-8c-1.66 0-3-1.34-3-3H7c0 2.76 2.24 5 5 5s5-2.24 5-5h-2c0 1.66-1.34 3-3 3z"/>
+            </svg>
+        </div>
+
+        <h1>E-Shop Mobile</h1>
+        <p class="subtitle">Hotel & POS Management System</p>
+
+        <div class="status-box">
+            <div id="statusText" class="status-text">Connecting to Server...</div>
+            <div id="spinner" class="spinner"></div>
+        </div>
+
+        <div class="btn-group">
+            <button id="connectNowBtn" class="btn btn-primary" onclick="launchServer()">
+                🚀 Connect Now / පිවිසෙන්න
+            </button>
+            <button id="changeUrlBtn" class="btn btn-secondary" onclick="openSettings()">
+                ⚙️ Change Server URL / වෙනස් කරන්න
+            </button>
+        </div>
+    </div>
+
+    <!-- Server Settings Modal -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">⚙️ Server URL Settings</div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="urlInput">Web Server Address (URL)</label>
+                <input type="url" id="urlInput" class="input-field" placeholder="https://example.com">
+            </div>
+
+            <div class="preset-list">
+                <span class="input-label">Default Preset:</span>
+                <button class="preset-btn" onclick="setPreset('https://admin-hoteleshop.hoteleshoplk2.com')">
+                    📌 https://admin-hoteleshop.hoteleshoplk2.com
+                </button>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="saveSettings()">
+                    💾 Save & Connect / සුරකින්න
+                </button>
+                <button class="btn btn-secondary" onclick="closeSettings()">
+                    ❌ Cancel / අවලංගු කරන්න
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_URL = 'https://admin-hoteleshop.hoteleshoplk2.com';
+        let countdownTimer = null;
+        let countdownSec = 2;
+
+        function getSavedUrl() {
+            return localStorage.getItem('eshop_server_url') || DEFAULT_URL;
+        }
+
+        async function requestNativePermissions() {
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.PushNotifications) {
+                try {
+                    const push = window.Capacitor.Plugins.PushNotifications;
+                    let perm = await push.checkPermissions();
+                    if (perm.receive !== 'granted') {
+                        perm = await push.requestPermissions();
+                    }
+                    if (perm.receive === 'granted') {
+                        await push.register();
+                        await push.createChannel({
+                            id: 'order_ringtone_channel',
+                            name: 'Order Ringtone Alerts',
+                            description: 'Channel for ringing order notifications',
+                            sound: 'ringtone',
+                            importance: 5,
+                            visibility: 1,
+                            vibration: true
+                        });
+                    }
+                } catch (e) {
+                    console.log('Capacitor Push Setup Error:', e);
+                }
+            }
+        }
+
+        function initApp() {
+            requestNativePermissions();
+            const activeUrl = getSavedUrl();
+            document.getElementById('statusText').innerText = `Connecting to:\n${activeUrl}`;
+            
+            // Auto redirect countdown
+            countdownTimer = setInterval(() => {
+                countdownSec--;
+                if (countdownSec <= 0) {
+                    clearInterval(countdownTimer);
+                    launchServer();
+                }
+            }, 1000);
+        }
+
+        function launchServer() {
+            if (countdownTimer) clearInterval(countdownTimer);
+            const activeUrl = getSavedUrl();
+            document.getElementById('statusText').innerText = `Redirecting to ${activeUrl}...`;
+            window.location.href = activeUrl;
+        }
+
+        function openSettings() {
+            if (countdownTimer) clearInterval(countdownTimer);
+            document.getElementById('spinner').style.display = 'none';
+            document.getElementById('statusText').innerText = 'Paused for URL configuration';
+            document.getElementById('urlInput').value = getSavedUrl();
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+            document.getElementById('spinner').style.display = 'block';
+            initApp();
+        }
+
+        function setPreset(url) {
+            document.getElementById('urlInput').value = url;
+        }
+
+        function saveSettings() {
+            let inputUrl = document.getElementById('urlInput').value.trim();
+            if (!inputUrl) {
+                alert('Please enter a valid URL!');
+                return;
+            }
+            if (!inputUrl.startsWith('http://') && !inputUrl.startsWith('https://')) {
+                inputUrl = 'https://' + inputUrl;
+            }
+            
+            localStorage.setItem('eshop_server_url', inputUrl);
+            document.getElementById('settingsModal').classList.remove('active');
+            alert('Server URL Saved Successfully!');
+            launchServer();
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
 </body>
 </html>
