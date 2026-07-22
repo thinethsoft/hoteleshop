@@ -350,37 +350,24 @@
             }
             
             const activeUrl = getSavedUrl();
-            document.getElementById('statusText').innerText = `Connecting to:\n${activeUrl}`;
-            
-            // Auto redirect countdown
-            countdownTimer = setInterval(() => {
-                countdownSec--;
-                if (countdownSec <= 0) {
-                    clearInterval(countdownTimer);
-                    launchServer();
-                }
-            }, 1000);
+            document.getElementById('statusText').innerText = `Target Server:\n${activeUrl}`;
+            document.getElementById('spinner').style.display = 'none';
         }
 
         function launchServer() {
-            if (countdownTimer) clearInterval(countdownTimer);
             const activeUrl = getSavedUrl();
-            document.getElementById('statusText').innerText = `Redirecting to ${activeUrl}...`;
+            document.getElementById('statusText').innerText = `Connecting to ${activeUrl}...`;
+            document.getElementById('spinner').style.display = 'block';
             window.location.href = activeUrl;
         }
 
         function openSettings() {
-            if (countdownTimer) clearInterval(countdownTimer);
-            document.getElementById('spinner').style.display = 'none';
-            document.getElementById('statusText').innerText = 'Paused for URL configuration';
             document.getElementById('urlInput').value = getSavedUrl();
             document.getElementById('settingsModal').classList.add('active');
         }
 
         function closeSettings() {
             document.getElementById('settingsModal').classList.remove('active');
-            document.getElementById('spinner').style.display = 'block';
-            initApp();
         }
 
         function setPreset(url) {
