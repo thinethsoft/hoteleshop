@@ -6,6 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'www',
   bundledWebRuntime: false,
   server: {
+    url: 'https://admin-14.hoteleshopdemo.com/',
     allowNavigation: [
       "*"
     ],
