@@ -342,8 +342,13 @@
             }
         }
 
-        function initApp() {
-            requestNativePermissions();
+        async function initApp() {
+            try {
+                await requestNativePermissions();
+            } catch (err) {
+                console.log('Permission err:', err);
+            }
+            
             const activeUrl = getSavedUrl();
             document.getElementById('statusText').innerText = `Connecting to:\n${activeUrl}`;
             

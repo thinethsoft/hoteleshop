@@ -6,6 +6,9 @@ const config: CapacitorConfig = {
   webDir: 'www',
   bundledWebRuntime: false,
   server: {
+    allowNavigation: [
+      "*"
+    ],
     cleartext: true
   },
   plugins: {
