@@ -316,39 +316,37 @@
             return localStorage.getItem('eshop_server_url') || DEFAULT_URL;
         }
 
-        async function requestNativePermissions() {
-            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.PushNotifications) {
-                try {
-                    const push = window.Capacitor.Plugins.PushNotifications;
-                    let perm = await push.checkPermissions();
-                    if (perm.receive !== 'granted') {
-                        perm = await push.requestPermissions();
+        function requestNativePermissions() {
+            // Run safely in background without blocking or crashing App launch
+            setTimeout(async () => {
+                if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.PushNotifications) {
+                    try {
+                        const push = window.Capacitor.Plugins.PushNotifications;
+                        let perm = await push.checkPermissions();
+                        if (perm.receive !== 'granted') {
+                            perm = await push.requestPermissions();
+                        }
+                        if (perm.receive === 'granted') {
+                            await push.register();
+                            await push.createChannel({
+                                id: 'order_ringtone_channel',
+                                name: 'Order Ringtone Alerts',
+                                description: 'Channel for ringing order notifications',
+                                sound: 'ringtone',
+                                importance: 5,
+                                visibility: 1,
+                                vibration: true
+                            });
+                        }
+                    } catch (e) {
+                        console.log('Capacitor Push Setup Error:', e);
                     }
-                    if (perm.receive === 'granted') {
-                        await push.register();
-                        await push.createChannel({
-                            id: 'order_ringtone_channel',
-                            name: 'Order Ringtone Alerts',
-                            description: 'Channel for ringing order notifications',
-                            sound: 'ringtone',
-                            importance: 5,
-                            visibility: 1,
-                            vibration: true
-                        });
-                    }
-                } catch (e) {
-                    console.log('Capacitor Push Setup Error:', e);
                 }
-            }
+            }, 1000);
         }
 
-        async function initApp() {
-            try {
-                await requestNativePermissions();
-            } catch (err) {
-                console.log('Permission err:', err);
-            }
-            
+        function initApp() {
+            requestNativePermissions();
             const activeUrl = getSavedUrl();
             document.getElementById('statusText').innerText = `Target Server:\n${activeUrl}`;
             document.getElementById('spinner').style.display = 'none';
